@@ -1974,3 +1974,82 @@ html.a11y-contrast .card-fan__overlay {
   opacity: 1;
   translate: -50% 0;
 }
+
+/* ---------- v2.1: phone fixes ---------- */
+
+/* "לתפריט המלא" lands at the top of the cards section; size the three
+   cards from the visible screen height so the last one is never cut. */
+@media (max-width: 640px) {
+  .card-fan {
+    --fan-card-h: max(130px, min(59vw, 228px, calc((100svh - 215px) / 3.1)));
+  }
+
+  .card-fan__stack {
+    height: calc(var(--fan-card-h) * 3 + 12px);
+  }
+
+  .card-fan__card {
+    height: var(--fan-card-h);
+    width: calc(var(--fan-card-h) * 0.745);
+  }
+}
+
+/* Navigation buttons: one for Waze, one for Google Maps. */
+.nav-app-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 46px;
+  padding: 0.5rem 1.1rem 0.5rem 0.9rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: scale 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-app-btn svg {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+.nav-app-btn:hover,
+.nav-app-btn:focus-visible {
+  scale: 1.06;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+}
+
+.nav-app-btn--waze {
+  background: #33ccff;
+  color: #0a2a3a;
+}
+
+.nav-app-btn--gmaps {
+  background: #fff;
+  color: #1f1f1f;
+  border: 1px solid #dadce0;
+}
+
+.nav-app-btn--gmaps svg {
+  color: #ea4335;
+}
+
+html.a11y-contrast .nav-app-btn {
+  background: #000;
+  color: #ff0;
+  border: 2px solid #ff0;
+}
+
+/* Menu window: follow the phone's visible height (address bar in or out)
+   and keep the last dishes clear of the home indicator. */
+.menu-modal {
+  height: 100vh;
+  height: 100dvh;
+  bottom: auto;
+}
+
+.menu-modal__body {
+  min-height: 0;
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
+}
