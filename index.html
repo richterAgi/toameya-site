@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>טועמיה | מעדנייה ומסעדה – טעם של בית יהודי, חיפה</title>
+  <meta name="description" content="טועמיה – מעדנייה ומסעדה בחיפה. חמין, קוגלים, דגים, הרינג וסלטים ביתיים. פתוח בחמישי בערב 19:00–00:30, הרב הרצוג 3 חיפה." />
+  <meta name="theme-color" content="#bf7318" />
+
+  <!-- Share preview (WhatsApp / Facebook). Once the site has a domain, change
+       og:image to a full address, e.g. https://example.co.il/img-og-image.jpg -->
+  <meta property="og:type" content="restaurant" />
+  <meta property="og:locale" content="he_IL" />
+  <meta property="og:site_name" content="טועמיה" />
+  <meta property="og:title" content="טועמיה – טעם של בית יהודי בכל צלחת" />
+  <meta property="og:description" content="חמין, קוגלים, דגים וסלטים ביתיים. חמישי בערב 19:00–00:30 · הרב הרצוג 3, חיפה" />
+  <meta property="og:image" content="img-og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="img-favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="img-icon-192.png" />
+  <link rel="apple-touch-icon" href="img-apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Apply the saved language + accessibility choices before first paint, so
+       the page never flashes in the wrong language / text size. -->
+  <script>
+    (function () {
+      try {
+        var lang = localStorage.getItem("toameya-lang");
+        if (lang === "en") {
+          document.documentElement.lang = "en";
+          document.documentElement.dir = "ltr";
+        }
+        var a11y = JSON.parse(localStorage.getItem("toameya-a11y") || "{}");
+        var root = document.documentElement;
+        if (a11y.size) root.setAttribute("data-text-size", String(a11y.size));
+        ["contrast", "links", "motion", "readable"].forEach(function (k) {
+          if (a11y[k]) root.classList.add("a11y-" + k);
+        });
+      } catch (e) {}
+    })();
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "טועמיה – מעדנייה ומסעדה",
+    "alternateName": "Toameya",
+    "slogan": "טעם של בית יהודי בכל צלחת",
+    "image": "img-og-image.jpg",
+    "logo": "img-logo.png",
+    "telephone": "+972-58-713-0405",
+    "servesCuisine": ["Jewish", "Israeli", "Kosher"],
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "הרב הרצוג 3",
+      "addressLocality": "חיפה",
+      "addressCountry": "IL"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Thursday", "opens": "19:00", "closes": "23:59" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "00:00", "closes": "00:30" }
+    ],
+    "hasMenu": "index.html#food"
+  }
+  </script>
+</head>
+<body>
+
+  <a class="skip-link" href="#main" data-i18n="skip">דלג לתוכן הראשי</a>
+
+  <header class="site-nav" id="siteNav">
+    <button type="button" class="site-nav__hamburger" id="navHamburger" aria-label="תפריט ניווט" data-i18n-attr="aria-label:navMenu" aria-expanded="false" aria-controls="navDrawer">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="site-nav__actions">
+      <button type="button" class="nav-icon-btn" id="searchOpen" aria-label="חיפוש מנה" data-i18n-attr="aria-label:searchOpen" aria-haspopup="dialog">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <button type="button" class="nav-lang-btn" data-lang-toggle aria-label="Switch to English" lang="en">EN</button>
+    </div>
+  </header>
+
+  <!-- Lives outside the hero so it can detach from the page's normal scroll
+       and fly (fixed position, JS-driven transform) from its hero spot up
+       to the nav bar as you scroll. Click = back to the top. -->
+  <a class="flying-logo" id="flyingLogo" href="#top" aria-label="טועמיה – חזרה לראש העמוד" data-i18n-attr="aria-label:logoHome">
+    <img src="img-logo.png" alt="" width="451" height="424" />
+  </a>
+
+  <main id="main">
+
+    <section class="hero" id="top">
+      <img
+        class="hero__image"
+        src="img-hero-buffet.jpg"
+        alt="מבחר מנות ממטבח טועמיה - אורז, ירקות, בשרים ותוספות"
+        data-i18n-attr="alt:heroAlt"
+      />
+
+      <div class="hero__panel hero__panel--leave" aria-hidden="true"></div>
+      <div class="hero__panel hero__panel--stay" aria-hidden="true"></div>
+
+      <div class="hero__content">
+        <div class="hero__logo-anchor" id="heroLogoAnchor" aria-hidden="true"></div>
+        <h1 class="visually-hidden" data-i18n="siteName">טועמיה – מעדנייה ומסעדה</h1>
+        <p class="hero__quote text-glass-black" data-i18n="heroQuote">טעם של בית יהודי בכל צלחת</p>
+        <p class="hero__credit text-glass-black" data-i18n="heroCredit">מבית חיים ויעלי שטיימן</p>
+        <div class="hero__buttons">
+          <a class="hero__cta" href="#highlights"><span class="text-glass-gold" data-i18n="heroCta">לתפריט המלא</span></a>
+          <button type="button" class="hero__special" id="specialBtn" data-drawer-trigger data-title="מה מיוחד השבוע" data-body="">
+            <span aria-hidden="true">✨</span> <span data-i18n="specialBtn">מה מיוחד השבוע</span>
+          </button>
+        </div>
+      </div>
+
+      <a class="hero__scroll" href="#highlights" aria-label="גלילה לתפריט" data-i18n-attr="aria-label:scrollAria">
+        <span class="text-glass-gold" data-i18n="scrollDown">גלילה למטה</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 4v16m0 0-6-6m6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </section>
+
+    <section class="card-fan" id="highlights" aria-labelledby="highlightsTitle">
+      <h2 class="visually-hidden" id="highlightsTitle" data-i18n="ourMenus">התפריטים שלנו</h2>
+      <img class="card-fan__bg" src="img-venue.jpg" alt="" aria-hidden="true" />
+      <div class="card-fan__overlay" aria-hidden="true"></div>
+
+      <div class="card-fan__panel card-fan__panel--tl" aria-hidden="true"></div>
+      <div class="card-fan__panel card-fan__panel--br" aria-hidden="true"></div>
+
+      <img class="card-fan__logo" src="img-logo.png" alt="" aria-hidden="true" />
+
+      <div class="card-fan__stack reveal">
+        <a class="card-fan__card card-fan__card--side card-fan__card--right" href="#extras" data-menu-open="extras">
+          <img class="card-fan__photo" src="menu-roast-potatoes.jpg" alt="" loading="lazy" />
+          <span class="card-fan__label" data-i18n="menu_extras">תוספות</span>
+        </a>
+
+        <a class="card-fan__card card-fan__card--main" href="#food" data-menu-open="food">
+          <img class="card-fan__photo" src="menu-schnitzel.jpg" alt="" loading="lazy" />
+          <span class="card-fan__label" data-i18n="menu_food">האוכל</span>
+        </a>
+
+        <a class="card-fan__card card-fan__card--side card-fan__card--left" href="#salads" data-menu-open="salads">
+          <img class="card-fan__photo" src="menu-matbucha.jpg" alt="" loading="lazy" />
+          <span class="card-fan__label" data-i18n="menu_salads">סלטים</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="info" id="about" aria-labelledby="aboutTitle">
+      <div class="info__inner">
+        <h2 class="info__title" id="aboutTitle" data-i18n="aboutTitle">בואו לטעום</h2>
+        <p class="info__lead" data-i18n="aboutLead">מעדנייה ומסעדה של אוכל יהודי ביתי – חמין, קוגלים, דגים וסלטים, כמו של סבתא.</p>
+
+        <div class="info__grid">
+          <article class="info-card">
+            <h3 class="info-card__title"><span aria-hidden="true">🕖</span> <span data-i18n="hoursTitle">שעות פתיחה</span></h3>
+            <p class="info-card__big" data-i18n="hoursDay">חמישי בערב</p>
+            <p class="info-card__big"><bdi dir="ltr">19:00 – 00:30</bdi></p>
+            <p class="info-card__note" data-i18n="hoursNote">בשאר ימות השבוע סגור</p>
+          </article>
+
+          <article class="info-card">
+            <h3 class="info-card__title"><span aria-hidden="true">📍</span> <span data-i18n="addressTitle">כתובת</span></h3>
+            <p class="info-card__big" data-i18n="address">הרב הרצוג 3, חיפה</p>
+            <div class="info-card__buttons">
+              <a class="pill-btn" href="https://waze.com/ul?q=%D7%94%D7%A8%D7%91%20%D7%94%D7%A8%D7%A6%D7%95%D7%92%203%20%D7%97%D7%99%D7%A4%D7%94&amp;navigate=yes" target="_blank" rel="noopener">Waze<span class="visually-hidden" data-i18n="newTab"> (נפתח בחלון חדש)</span></a>
+              <a class="pill-btn" href="https://www.google.com/maps/search/?api=1&amp;query=%D7%94%D7%A8%D7%91+%D7%94%D7%A8%D7%A6%D7%95%D7%92+3+%D7%97%D7%99%D7%A4%D7%94" target="_blank" rel="noopener">Google Maps<span class="visually-hidden" data-i18n="newTab"> (נפתח בחלון חדש)</span></a>
+            </div>
+          </article>
+
+          <article class="info-card">
+            <h3 class="info-card__title"><span aria-hidden="true">📞</span> <span data-i18n="contactTitle">הזמנות ושאלות</span></h3>
+            <p class="info-card__big"><a href="tel:+972587130405" dir="ltr">058-7130405</a></p>
+            <div class="info-card__buttons">
+              <a class="pill-btn" href="tel:+972587130405" data-i18n="callUs">חייגו אלינו</a>
+              <a class="pill-btn pill-btn--wa" href="https://wa.me/972587130405" data-whatsapp target="_blank" rel="noopener" data-i18n="whatsappUs">וואטסאפ</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="info__extra" id="kashrut">
+          <h3 class="info__subtitle" data-i18n="kashrutTitle">כשרות</h3>
+          <p data-i18n="kashrutText">תעודת הכשרות ופירוט כשרויות הבשרים יתווספו כאן בקרוב.</p>
+        </div>
+
+        <div class="info__extra" id="accessibility">
+          <h3 class="info__subtitle" data-i18n="a11yStatementTitle">הצהרת נגישות</h3>
+          <p data-i18n="a11yStatementText">אנו פועלים להנגשת האתר לכלל הגולשים. באתר כפתור נגישות (בפינה השמאלית התחתונה) המאפשר הגדלת טקסט, ניגודיות גבוהה, הדגשת קישורים, עצירת אנימציות וגופן קריא. פרטי רכז הנגישות יתווספו כאן בקרוב.</p>
+        </div>
+
+        <footer class="info__footer">
+          <img src="img-logo.png" alt="" class="info__footer-logo" width="64" height="60" loading="lazy" />
+          <div>
+            <p>© <span id="year">2026</span> <span data-i18n="footerName">טועמיה – מבית חיים ויעלי שטיימן</span></p>
+            <p class="info__credit" data-i18n="madeBy">נוצר ע"י richter</p>
+          </div>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================== Full-screen menu window ====================== -->
+  <div class="menu-modal" id="menuModal" role="dialog" aria-modal="true" aria-labelledby="menuModalTitle" hidden>
+    <div class="menu-modal__panel" id="menuPanel">
+      <header class="menu-modal__header">
+        <img class="menu-modal__logo" src="img-logo.png" alt="" width="451" height="424" />
+        <h2 class="visually-hidden" id="menuModalTitle"></h2>
+        <div class="menu-tabs" role="tablist" aria-label="תפריטים" data-i18n-attr="aria-label:menusAria">
+          <button type="button" class="menu-tabs__tab" role="tab" id="tab-food" data-tab="food" aria-controls="menuBody" data-i18n="menu_food">האוכל</button>
+          <button type="button" class="menu-tabs__tab" role="tab" id="tab-salads" data-tab="salads" aria-controls="menuBody" data-i18n="menu_salads">סלטים</button>
+          <button type="button" class="menu-tabs__tab" role="tab" id="tab-extras" data-tab="extras" aria-controls="menuBody" data-i18n="menu_extras">תוספות</button>
+        </div>
+        <button type="button" class="menu-modal__close" id="menuClose" aria-label="סגירת התפריט" data-i18n-attr="aria-label:closeMenu">&times;</button>
+      </header>
+      <div class="menu-modal__body" id="menuBody" role="tabpanel" tabindex="-1"></div>
+    </div>
+  </div>
+
+  <!-- ============================ Search ============================ -->
+  <div class="search-dialog" id="searchDialog" role="dialog" aria-modal="true" aria-labelledby="searchTitle" hidden>
+    <div class="search-dialog__backdrop" data-search-close></div>
+    <div class="search-dialog__panel">
+      <div class="search-dialog__row">
+        <h2 class="visually-hidden" id="searchTitle" data-i18n="searchTitle">חיפוש מנה</h2>
+        <label class="visually-hidden" for="searchInput" data-i18n="searchLabel">שם המנה</label>
+        <input type="search" id="searchInput" class="search-dialog__input" placeholder="חפשו מנה… למשל חציל" data-i18n-attr="placeholder:searchPlaceholder" autocomplete="off" />
+        <button type="button" class="search-dialog__close" data-search-close aria-label="סגירה" data-i18n-attr="aria-label:close">&times;</button>
+      </div>
+      <p class="search-dialog__status" id="searchStatus" aria-live="polite"></p>
+      <ul class="search-results" id="searchResults"></ul>
+    </div>
+  </div>
+
+  <!-- Side drawer – used for "what's special this week" -->
+  <div class="side-drawer" id="sideDrawer" role="dialog" aria-modal="true" aria-labelledby="sideDrawerTitle" hidden>
+    <div class="side-drawer__backdrop" data-drawer-close></div>
+    <div class="side-drawer__panel">
+      <button type="button" class="side-drawer__close" data-drawer-close aria-label="סגירה" data-i18n-attr="aria-label:close">&times;</button>
+      <h3 id="sideDrawerTitle" class="side-drawer__title"></h3>
+      <p id="sideDrawerBody" class="side-drawer__body"></p>
+    </div>
+  </div>
+
+  <!-- Hamburger navigation -->
+  <div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="תפריט ניווט" data-i18n-attr="aria-label:navMenu" hidden>
+    <div class="nav-drawer__backdrop" data-nav-close></div>
+    <nav class="nav-drawer__panel">
+      <button type="button" class="nav-drawer__close" data-nav-close aria-label="סגירה" data-i18n-attr="aria-label:close">&times;</button>
+      <ul class="nav-drawer__list">
+        <li><a href="#top" data-i18n="nav_home">בית</a></li>
+        <li><a href="#food" data-i18n="menu_food">האוכל</a></li>
+        <li><a href="#salads" data-i18n="menu_salads">סלטים</a></li>
+        <li><a href="#extras" data-i18n="menu_extras">תוספות</a></li>
+        <li><a href="#kashrut" data-i18n="nav_kashrut">כשרות</a></li>
+        <li><a href="#about" data-i18n="nav_about">אודות ופרטי התקשרות</a></li>
+      </ul>
+      <div class="nav-drawer__bottom">
+        <button type="button" class="pill-btn" data-lang-toggle lang="en">English</button>
+        <a class="pill-btn pill-btn--wa" href="https://wa.me/972587130405" data-whatsapp target="_blank" rel="noopener" data-i18n="whatsappUs">וואטסאפ</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ===================== Floating contact buttons ===================== -->
+  <div class="float-contact">
+    <a class="float-btn float-btn--call" href="tel:+972587130405" aria-label="חיוג לטועמיה 058-7130405" data-i18n-attr="aria-label:callAria">
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg>
+    </a>
+    <a class="float-btn float-btn--wa" href="https://wa.me/972587130405" data-whatsapp target="_blank" rel="noopener" aria-label="שליחת הודעת וואטסאפ לטועמיה" data-i18n-attr="aria-label:waAria">
+      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.7a10.7 10.7 0 0 1-5.5-1.5l-.4-.2-3.9 1 1-3.8-.3-.4A10.7 10.7 0 1 1 16 26.7zm5.9-8c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3 14.4 14.4 0 0 0 5.5 4.9c2 .9 2.8.9 3.8.8a3.2 3.2 0 0 0 2.1-1.5 2.6 2.6 0 0 0 .2-1.5c-.1-.1-.3-.2-.6-.3z"/></svg>
+    </a>
+  </div>
+
+  <!-- ======================= Accessibility menu ======================= -->
+  <button type="button" class="a11y-btn" id="a11yOpen" aria-label="תפריט נגישות" data-i18n-attr="aria-label:a11yMenu" aria-expanded="false" aria-controls="a11yPanel">
+    <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><circle cx="12" cy="4" r="2" fill="currentColor"/><path fill="currentColor" d="M20.5 7.5c-2.6.7-5.4 1-8.5 1s-5.9-.3-8.5-1l-.5 1.9c2.1.6 4.4 1 6.8 1.1V13l-2 8h2.2l1.8-6.7h.4L14 21h2.2l-2-8v-2.5c2.4-.1 4.7-.5 6.8-1.1z"/></svg>
+  </button>
+  <div class="a11y-panel" id="a11yPanel" role="dialog" aria-labelledby="a11yTitle" hidden>
+    <div class="a11y-panel__head">
+      <h2 id="a11yTitle" data-i18n="a11yMenu">תפריט נגישות</h2>
+      <button type="button" class="a11y-panel__close" id="a11yClose" aria-label="סגירה" data-i18n-attr="aria-label:close">&times;</button>
+    </div>
+    <div class="a11y-panel__size" role="group" aria-labelledby="a11ySizeLabel">
+      <span id="a11ySizeLabel" data-i18n="a11yTextSize">גודל טקסט</span>
+      <div class="a11y-panel__size-btns">
+        <button type="button" data-a11y-size="-1" aria-label="הקטנת טקסט" data-i18n-attr="aria-label:a11ySmaller">א-</button>
+        <output id="a11ySizeValue" aria-live="polite">100%</output>
+        <button type="button" data-a11y-size="1" aria-label="הגדלת טקסט" data-i18n-attr="aria-label:a11yBigger">א+</button>
+      </div>
+    </div>
+    <button type="button" class="a11y-toggle" data-a11y="contrast" aria-pressed="false"><span aria-hidden="true">◐</span> <span data-i18n="a11yContrast">ניגודיות גבוהה</span></button>
+    <button type="button" class="a11y-toggle" data-a11y="links" aria-pressed="false"><span aria-hidden="true">🔗</span> <span data-i18n="a11yLinks">הדגשת קישורים</span></button>
+    <button type="button" class="a11y-toggle" data-a11y="motion" aria-pressed="false"><span aria-hidden="true">⏸</span> <span data-i18n="a11yMotion">עצירת אנימציות</span></button>
+    <button type="button" class="a11y-toggle" data-a11y="readable" aria-pressed="false"><span aria-hidden="true">Aa</span> <span data-i18n="a11yReadable">גופן קריא</span></button>
+    <button type="button" class="a11y-reset" id="a11yReset" data-i18n="a11yReset">איפוס הגדרות</button>
+    <a class="a11y-panel__statement" href="#accessibility" data-i18n="a11yStatementTitle">הצהרת נגישות</a>
+  </div>
+
+  <script src="menu-data.js"></script>
+  <script src="i18n.js"></script>
+  <script src="main.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

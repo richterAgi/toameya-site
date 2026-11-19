@@ -1,0 +1,1976 @@
+:root {
+  --color-brand: #f2911f;
+  --color-brand-dark: #bf7318;
+  --color-brand-light: #ff9921;
+  --color-cream: #f6ece4;
+  --color-on-brand: #ffffff;
+
+  --font-body: "Heebo", "Segoe UI", system-ui, sans-serif;
+
+  --hero-split-duration: 1.2s;
+  --hero-split-ease: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+    scroll-snap-type: none;
+  }
+}
+
+/* Each full-screen section snaps gently into place as you scroll past it. */
+.hero,
+.card-fan,
+.content-page {
+  scroll-snap-align: start;
+}
+
+/* Sections fade + rise into view the first time they cross into the
+   viewport - whether you scroll normally or click a button that scrolls
+   to them - so moving to the next section feels like a deliberate
+   transition rather than a flat cut. Toggled by IntersectionObserver in
+   main.js. */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+body {
+  direction: rtl;
+  font-family: var(--font-body);
+  background: var(--color-brand-dark);
+  color: var(--color-cream);
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--color-brand-dark);
+}
+
+.hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 45%;
+  z-index: 0;
+}
+
+/* Two color panels cover the whole hero on load, then split apart along the
+   top-left -> bottom-right diagonal. Both use the same 4-point winding order
+   so the browser can interpolate clip-path smoothly between them. */
+
+.hero__panel {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  will-change: clip-path, transform, opacity;
+}
+
+.hero__panel--stay {
+  background: var(--color-brand);
+  clip-path: polygon(50% 0%, 100% 0%, 100% 50%, 100% 50%);
+  animation: heroTearTR var(--hero-split-duration) var(--hero-split-ease) both;
+}
+
+.hero__panel--leave {
+  background: var(--color-brand);
+  clip-path: polygon(0% 50%, 50% 100%, 0% 100%, 0% 100%);
+  animation: heroTearBL var(--hero-split-duration) var(--hero-split-ease) both;
+}
+
+/* Both panels start as one solid color covering the whole hero, then tear
+   apart along the top-left -> bottom-right diagonal: at the halfway point
+   they meet exactly on that diagonal (the "rip"), then each one keeps
+   retreating into its own corner, opening a diagonal band that reveals the
+   photo while a triangle of color stays in both corners. */
+
+@keyframes heroTearTR {
+  0% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  50% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 100% 100%);
+  }
+  100% {
+    clip-path: polygon(50% 0%, 100% 0%, 100% 50%, 100% 50%);
+  }
+}
+
+@keyframes heroTearBL {
+  0% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  50% {
+    clip-path: polygon(0% 0%, 100% 100%, 100% 100%, 0% 100%);
+  }
+  100% {
+    clip-path: polygon(0% 50%, 50% 100%, 0% 100%, 0% 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__panel--stay,
+  .hero__panel--leave {
+    animation: none;
+  }
+  .hero__panel--stay {
+    clip-path: polygon(50% 0%, 100% 0%, 100% 50%, 100% 50%);
+  }
+  .hero__panel--leave {
+    clip-path: polygon(0% 50%, 50% 100%, 0% 100%, 0% 100%);
+  }
+}
+
+/* Content lives inside the triangular panel that stays (top-right),
+   clear of the diagonal seam. */
+
+.hero__content {
+  position: absolute;
+  z-index: 2;
+  top: 4%;
+  right: 7%;
+  width: min(80vw, 30rem);
+  text-align: right;
+  animation: heroContentIn 0.8s ease-out 0.75s both;
+}
+
+@keyframes heroContentIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__content {
+    animation: none;
+  }
+}
+
+/* Invisible spacer: reserves the exact spot/size the logo used to occupy
+   here, so the layout doesn't shift now that the real logo is a
+   fixed-position element (.flying-logo) living outside the hero. Its rect
+   is measured in main.js as the animation's start point. */
+.hero__logo-anchor {
+  width: clamp(110px, 13vw, 160px);
+  height: clamp(110px, 13vw, 160px);
+  margin: 0 0 0.6rem auto;
+  visibility: hidden;
+}
+
+/* The real logo: fixed to the viewport so it can detach from normal
+   scrolling. Its own CSS position/size here IS the nav-bar target - js/
+   main.js computes a transform that starts it at the hero spot (matching
+   .hero__logo-anchor) and animates it down to "no transform" (this exact
+   spot) as you scroll, then keeps shrinking it slightly further per the
+   nav-shrink behavior. */
+.flying-logo {
+  position: fixed;
+  top: 9px;
+  right: calc(5% + 46px);
+  width: 46px;
+  height: auto;
+  z-index: 60;
+  transform-origin: center;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  display: block;
+  border-radius: 8px;
+}
+
+.flying-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.flying-logo.is-landed {
+  pointer-events: auto;
+}
+
+/* English (LTR): the hamburger moves to the left edge and the logo takes
+   the spot the hamburger had on the right. */
+[dir="ltr"] .flying-logo {
+  right: 5%;
+}
+
+.hero__quote {
+  margin: 0 0 0.3rem;
+  font-size: clamp(1rem, 1.7vw, 1.3rem);
+  font-weight: 700;
+}
+
+.hero__credit {
+  margin: 0 0 0.9rem;
+  font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.hero__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.hero__cta {
+  display: inline-block;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  background: var(--color-on-brand);
+  color: var(--color-brand-dark);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero__cta:hover,
+.hero__cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+/* A metallic, glassy gold finish for text: a banded gradient (dark gold ->
+   pale shine -> dark gold) clipped to the glyphs themselves, so the text
+   reads like gold catching the light rather than a flat color. */
+.text-glass-gold {
+  /* background-IMAGE, not the "background" shorthand - the shorthand would
+     reset background-color to transparent too, wiping out a solid button
+     background (e.g. .hero__cta) that this class is combined with. */
+  background-image: linear-gradient(100deg, #8a6215 0%, #f9df9b 22%, #fffbea 40%, #f2ca63 55%, #8a6215 75%, #d9b34c 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* A glossy black-glass finish: a dark banded gradient with a faint sheen,
+   plus a stacked shadow for real depth against the bright orange page. */
+.text-glass-black {
+  background-image: linear-gradient(100deg, #000000 0%, #3a3a3a 25%, #1a1a1a 45%, #4a4a4a 65%, #000000 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5), 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.hero__scroll {
+  position: absolute;
+  z-index: 2;
+  bottom: 6%;
+  left: 50%;
+  translate: -50% 0;
+  scale: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-on-brand);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  transition: scale 0.25s ease, background-color 0.25s ease;
+  --bounce-duration: 2.2s;
+  --bounce-travel: 6px;
+  animation: heroContentIn 0.8s ease-out 1s both,
+    heroBounce var(--bounce-duration) ease-in-out 1.8s infinite;
+}
+
+.hero__scroll:hover,
+.hero__scroll:focus-visible {
+  scale: 1.15;
+  background: rgba(0, 0, 0, 0.4);
+  --bounce-duration: 0.7s;
+  --bounce-travel: 10px;
+}
+
+.hero__scroll svg {
+  transition: translate 0.25s ease;
+}
+
+.hero__scroll:hover svg,
+.hero__scroll:focus-visible svg {
+  translate: 0 3px;
+}
+
+@keyframes heroBounce {
+  0%,
+  100% {
+    translate: -50% 0;
+  }
+  50% {
+    translate: -50% var(--bounce-travel);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__scroll {
+    animation: none;
+  }
+  .hero__scroll:hover,
+  .hero__scroll:focus-visible {
+    scale: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__content {
+    top: auto;
+    bottom: 17%;
+    right: 6%;
+    left: 6%;
+    width: auto;
+    text-align: center;
+  }
+
+  .hero__logo-anchor {
+    margin-inline: auto;
+  }
+
+  .hero__buttons {
+    justify-content: center;
+  }
+
+  .hero__panel--stay {
+    clip-path: polygon(50% 0%, 100% 0%, 100% 50%, 100% 50%);
+  }
+}
+
+/* ---------- Card fan (highlights) ---------- */
+
+.card-fan {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+.card-fan__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Scaled up so the blurred edges are cropped out of view. */
+  transform: scale(1.15);
+  filter: blur(10px);
+  z-index: 0;
+}
+
+.card-fan__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(191, 115, 24, 0.75) 0%,
+    rgba(191, 115, 24, 0.55) 100%
+  );
+}
+
+/* Same tear effect as the hero, mirrored (opens top-right -> bottom-left
+   instead of top-left -> bottom-right). Fully covers the photo by default;
+   main.js drives it via clip-path in lockstep with the hero's own
+   closing tear, using one shared scroll position for both, so opening and
+   closing are always perfectly synced across the two sections. */
+.card-fan__panel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--color-brand);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-fan__panel--tl {
+    clip-path: polygon(0% 0%, 50% 0%, 0% 50%, 0% 50%);
+  }
+  .card-fan__panel--br {
+    clip-path: polygon(100% 50%, 100% 50%, 100% 100%, 50% 100%);
+  }
+}
+
+/* Same spot/size/shadow as the hero's own logo, mirrored to the left.
+   Starts stuck against the left edge of the page and, once the section has
+   opened (.is-visible, toggled by the IntersectionObserver in main.js),
+   springs free and snaps into its resting spot - the overshoot easing is
+   what sells the "peeling off / unstuck" feel rather than a plain slide. */
+.card-fan__logo {
+  position: absolute;
+  z-index: 4;
+  top: 4%;
+  left: 7%;
+  width: clamp(110px, 13vw, 160px);
+  height: auto;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+  transform: translateX(-260%);
+  transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.card-fan.is-visible .card-fan__logo {
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-fan__logo {
+    transform: none;
+    transition: none;
+  }
+}
+
+.card-fan__stack {
+  position: relative;
+  z-index: 3;
+  /* Bigger again so the three corner cards can sit further apart. */
+  width: min(98vw, 46rem);
+  height: clamp(480px, 56vw, 620px);
+}
+
+.card-fan__card {
+  position: absolute;
+  display: block;
+  /* +3% over the previous clamp(179px, 23.1vw, 221px) / clamp(242px, 31.5vw, 294px). */
+  width: clamp(184px, 23.8vw, 228px);
+  height: clamp(249px, 32.4vw, 303px);
+  border: none;
+  border-radius: 1.25rem;
+  background: var(--color-cream);
+  color: var(--color-brand-dark);
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  scale: 1;
+  /* Glassy shadow, directional: light reads as coming from the top-left,
+     casting the shadow down toward the bottom-right (positive x/y offsets),
+     with a bright inset edge hugging the top-left to match. */
+  box-shadow: 16px 24px 46px rgba(0, 0, 0, 0.3), 7px 11px 20px rgba(0, 0, 0, 0.2),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.45);
+  transition: scale 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+/* Three separate spots - top-right, center, bottom-left - echoing the same
+   diagonal the page's own tear animation opens along. Pushed slightly past
+   the stack's own edges (negative insets) for extra separation. */
+.card-fan__card--right {
+  top: -4%;
+  right: -3%;
+  z-index: 2;
+  filter: brightness(0.9);
+}
+
+.card-fan__card--main {
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: 3;
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+}
+
+.card-fan__card--left {
+  bottom: -4%;
+  left: -3%;
+  z-index: 2;
+  filter: brightness(0.9);
+}
+
+.card-fan__card--main:hover,
+.card-fan__card--main:focus-visible {
+  scale: 1.04;
+}
+
+.card-fan__card--right:hover,
+.card-fan__card--right:focus-visible,
+.card-fan__card--left:hover,
+.card-fan__card--left:focus-visible {
+  scale: 1.05;
+  filter: brightness(1);
+  z-index: 4;
+}
+
+/* Card label: black text with a white outline (stroke behind the fill, so
+   it doesn't eat into the letterforms) and a soft shadow behind the whole
+   thing, sitting top-center inside the card. */
+.card-fan__label {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  translate: -50% 0;
+  color: #000;
+  font-size: 1.15rem;
+  font-weight: 800;
+  white-space: nowrap;
+  -webkit-text-stroke: 3px #fff;
+  paint-order: stroke fill;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+}
+
+/* ---------- Content pages (תוספות / האוכל / סלטים) ---------- */
+/* Plain placeholder "pages" the three cards navigate to. Minimal on
+   purpose - real layout/content still to come once the actual menu items,
+   prices etc. are provided (see docs/PLAN.md section 8). */
+
+.content-page {
+  position: relative;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6rem 1.5rem 2rem;
+  background: var(--color-cream);
+  color: var(--color-brand-dark);
+}
+
+.content-page__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: var(--color-brand);
+}
+
+.content-page__placeholder {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.75;
+}
+
+/* Salads page: a real photo of the deli fridge as a full-bleed background,
+   with a dark overlay for text contrast (same recipe as .card-fan__bg /
+   .card-fan__overlay). */
+.content-page--salads {
+  background: var(--color-brand-dark);
+}
+
+.content-page__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.content-page__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(30, 18, 4, 0.55) 0%, rgba(30, 18, 4, 0.75) 100%);
+}
+
+.content-page__body {
+  position: relative;
+  z-index: 2;
+}
+
+.content-page__title--light {
+  color: var(--color-on-brand);
+}
+
+.content-page__placeholder--light {
+  color: var(--color-cream);
+  opacity: 0.9;
+}
+
+/* ---------- Side drawer ---------- */
+
+.side-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.side-drawer[hidden] {
+  display: none;
+}
+
+.side-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.side-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(90vw, 26rem);
+  background: var(--color-cream);
+  color: var(--color-brand-dark);
+  box-shadow: -12px 0 30px rgba(0, 0, 0, 0.3);
+  padding: 2rem 1.75rem;
+  translate: 100% 0;
+  transition: translate 0.35s ease;
+  overflow-y: auto;
+}
+
+.side-drawer.is-open .side-drawer__backdrop {
+  opacity: 1;
+}
+
+.side-drawer.is-open .side-drawer__panel {
+  translate: 0 0;
+}
+
+.side-drawer__close {
+  border: none;
+  background: transparent;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-brand-dark);
+  padding: 0.25rem 0.5rem;
+  margin-inline-start: -0.5rem;
+}
+
+.side-drawer__title {
+  margin: 1rem 0 0.75rem;
+  font-size: 1.5rem;
+}
+
+.side-drawer__body {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+/* ---------- Nav drawer (hamburger menu) ---------- */
+
+.nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+}
+
+.nav-drawer[hidden] {
+  display: none;
+}
+
+.nav-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.nav-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(90vw, 26rem);
+  background: var(--color-cream);
+  color: var(--color-brand-dark);
+  box-shadow: -12px 0 30px rgba(0, 0, 0, 0.3);
+  padding: 5rem 1.75rem 2rem;
+  translate: 100% 0;
+  transition: translate 0.35s ease;
+  overflow-y: auto;
+}
+
+.nav-drawer.is-open .nav-drawer__backdrop {
+  opacity: 1;
+}
+
+.nav-drawer.is-open .nav-drawer__panel {
+  translate: 0 0;
+}
+
+.nav-drawer__close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  border: none;
+  background: transparent;
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-brand-dark);
+  padding: 0.25rem 0.5rem;
+}
+
+.nav-drawer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-drawer__list li + li {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-drawer__list a {
+  display: block;
+  padding: 1.1rem 0.25rem;
+  color: var(--color-brand-dark);
+  text-decoration: none;
+  font-size: 1.15rem;
+  font-weight: 600;
+  transition: color 0.2s ease, padding-inline-start 0.2s ease;
+}
+
+.nav-drawer__list a:hover,
+.nav-drawer__list a:focus-visible {
+  color: var(--color-brand);
+  padding-inline-start: 0.5rem;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* ---------- Sticky nav ---------- */
+
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 5%;
+  background: rgba(30, 18, 4, 0.32);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.site-nav.is-visible,
+.site-nav:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.site-nav__hamburger {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.site-nav__hamburger span {
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-on-brand);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.site-nav__hamburger[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.site-nav__hamburger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.site-nav__hamburger[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav {
+    transition: none;
+  }
+  .site-nav__hamburger span {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   v2 (2026-11) – menu windows, search, languages, accessibility, contact
+   ========================================================================== */
+
+/* ---------- Helpers ---------- */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  inset-inline-start: 8px;
+  z-index: 300;
+  padding: 0.7rem 1.1rem;
+  border-radius: 10px;
+  background: #000;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:focus-visible {
+  outline: 3px solid #ffd166;
+  outline-offset: 3px;
+}
+
+html {
+  scroll-padding-top: 72px;
+}
+
+/* Every button-like control "lifts" slightly on hover / keyboard focus. */
+.pill-btn,
+.nav-icon-btn,
+.nav-lang-btn,
+.site-nav__hamburger,
+.hero__special,
+.menu-tabs__tab,
+.menu-sections__chip,
+.menu-modal__close,
+.float-btn,
+.a11y-btn,
+.a11y-toggle,
+.a11y-reset,
+.a11y-panel__size-btns button,
+.search-result,
+.nav-drawer__bottom .pill-btn {
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.pill-btn:hover,
+.pill-btn:focus-visible,
+.nav-icon-btn:hover,
+.nav-icon-btn:focus-visible,
+.nav-lang-btn:hover,
+.nav-lang-btn:focus-visible,
+.site-nav__hamburger:hover,
+.site-nav__hamburger:focus-visible,
+.hero__special:hover,
+.hero__special:focus-visible,
+.menu-tabs__tab:hover,
+.menu-tabs__tab:focus-visible,
+.menu-sections__chip:hover,
+.menu-sections__chip:focus-visible,
+.menu-modal__close:hover,
+.menu-modal__close:focus-visible,
+.float-btn:hover,
+.float-btn:focus-visible,
+.a11y-btn:hover,
+.a11y-btn:focus-visible,
+.a11y-toggle:hover,
+.a11y-toggle:focus-visible,
+.a11y-reset:hover,
+.a11y-reset:focus-visible,
+.a11y-panel__size-btns button:hover,
+.a11y-panel__size-btns button:focus-visible,
+.search-result:hover,
+.search-result:focus-visible {
+  transform: scale(1.06);
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.55rem 1.2rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-brand);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pill-btn--wa {
+  background: #1f9e55;
+}
+
+/* ---------- Top bar additions ---------- */
+
+.site-nav__actions {
+  margin-inline-start: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* In English the logo sits at the far right, so keep the buttons clear of it. */
+[dir="ltr"] .site-nav__actions {
+  margin-inline-end: 58px;
+}
+
+.nav-icon-btn,
+.nav-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.site-nav__hamburger {
+  width: 44px;
+  height: 44px;
+}
+
+/* ---------- Hero: special-of-the-week button ---------- */
+
+.hero__special {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.75rem 1.3rem;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  background: rgba(20, 12, 2, 0.78);
+  color: #ffe7a8;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Card fan: real food photos on the cards ---------- */
+
+.card-fan__photo {
+  position: absolute;
+  inset: 54px 10px 10px;
+  width: calc(100% - 20px);
+  height: calc(100% - 64px);
+  object-fit: cover;
+  border-radius: 0.9rem;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 640px) {
+  .card-fan {
+    padding: 84px 0 40px;
+  }
+
+  .card-fan__stack {
+    width: 100vw;
+    height: 560px;
+  }
+
+  .card-fan__card {
+    width: min(44vw, 170px);
+    height: min(59vw, 228px);
+  }
+
+  .card-fan__card--right {
+    top: 0;
+    right: 5%;
+  }
+
+  .card-fan__card--left {
+    bottom: 0;
+    left: 5%;
+  }
+
+  .card-fan__logo {
+    top: 84px;
+    width: 96px;
+  }
+}
+
+/* ---------- About / info section ---------- */
+
+.info {
+  position: relative;
+  min-height: 100%;
+  padding: 96px 1.25rem 120px;
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(242, 145, 31, 0.35), transparent 60%),
+    linear-gradient(180deg, #2a1806 0%, #1a0f03 100%);
+  color: var(--color-cream);
+  scroll-snap-align: start;
+}
+
+.info__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.info__title {
+  margin: 0 0 0.4rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  color: var(--color-brand-light);
+}
+
+.info__lead {
+  margin: 0 0 2rem;
+  max-width: 40rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.info__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.1rem;
+}
+
+.info-card {
+  padding: 1.4rem 1.3rem;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), inset 1px 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+}
+
+.info-card__title {
+  margin: 0 0 0.8rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffd9a3;
+}
+
+.info-card__big {
+  margin: 0 0 0.2rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.info-card__big a {
+  color: inherit;
+}
+
+.info-card__note {
+  margin: 0.4rem 0 0;
+  opacity: 0.75;
+}
+
+.info-card__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.info__extra {
+  margin-top: 2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  scroll-margin-top: 90px;
+}
+
+.info__subtitle {
+  margin: 0 0 0.4rem;
+  font-size: 1.2rem;
+  color: var(--color-brand-light);
+}
+
+.info__extra p {
+  margin: 0;
+  max-width: 48rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+.info__footer {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 2.5rem;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.info__footer-logo {
+  width: 56px;
+  height: auto;
+}
+
+/* ---------- Full-screen menu window ---------- */
+
+.menu-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+}
+
+.menu-modal[hidden] {
+  display: none;
+}
+
+.menu-modal__panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(900px 420px at 90% -5%, rgba(242, 145, 31, 0.28), transparent 60%),
+    linear-gradient(180deg, #24150a 0%, #160d04 100%);
+  color: var(--color-cream);
+  opacity: 0;
+  transition: clip-path 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.25s ease;
+}
+
+.menu-modal.is-open .menu-modal__panel {
+  opacity: 1;
+}
+
+.menu-modal__header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 5%;
+  padding-top: max(10px, env(safe-area-inset-top));
+  min-height: 64px;
+  background: rgba(30, 18, 4, 0.55);
+  backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.menu-modal__logo {
+  width: 44px;
+  height: auto;
+  flex: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+}
+
+.menu-tabs {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.menu-tabs__tab {
+  min-height: 44px;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-cream);
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.menu-tabs__tab[aria-selected="true"] {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(242, 145, 31, 0.35);
+}
+
+.menu-modal__close {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.menu-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 5% 140px;
+  outline: none;
+}
+
+.menu-sections {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  margin: 0 -5%;
+  background: linear-gradient(180deg, rgba(26, 15, 4, 0.96) 70%, rgba(26, 15, 4, 0));
+}
+
+.menu-sections__chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-cream);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.menu-section {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-top: 18px;
+}
+
+.menu-section__title {
+  margin: 0.6rem 0 1rem;
+  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+  font-weight: 800;
+  color: var(--color-brand-light);
+  outline: none;
+}
+
+.dish-grid {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(46%, 220px), 1fr));
+  gap: clamp(10px, 2vw, 22px);
+}
+
+.dish {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  background: var(--color-cream);
+  color: #2a1806;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35), inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  scroll-margin-top: 90px;
+}
+
+.dish:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+}
+
+.dish.is-highlighted {
+  outline: 4px solid var(--color-brand);
+  outline-offset: 3px;
+  transform: scale(1.04);
+}
+
+.dish__media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #3a2510;
+}
+
+.dish__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.dish:hover .dish__media img {
+  transform: scale(1.06);
+}
+
+.dish__text {
+  padding: 0.75rem 0.9rem 0.9rem;
+}
+
+.dish__name {
+  margin: 0;
+  font-size: clamp(0.98rem, 1.6vw, 1.1rem);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.dish__prices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0.45rem 0 0;
+  font-weight: 700;
+  color: var(--color-brand-dark);
+}
+
+.dish__qty {
+  font-weight: 500;
+  color: #6b4a22;
+}
+
+/* While a menu window is open, the page's own bars stay out of the way. */
+body.menu-is-open .site-nav,
+body.menu-is-open .flying-logo {
+  visibility: hidden;
+}
+
+/* ---------- Search ---------- */
+
+.search-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+}
+
+.search-dialog[hidden] {
+  display: none;
+}
+
+.search-dialog__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.search-dialog__panel {
+  position: relative;
+  width: min(640px, 92vw);
+  max-height: 80vh;
+  margin: 10vh auto 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 1.25rem;
+  background: var(--color-cream);
+  color: #2a1806;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.search-dialog__row {
+  display: flex;
+  gap: 8px;
+}
+
+.search-dialog__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  padding: 0 1rem;
+  border: 2px solid var(--color-brand);
+  border-radius: 14px;
+  background: #fff;
+  color: #2a1806;
+  font: inherit;
+  font-size: 1.15rem;
+}
+
+.search-dialog__close {
+  width: 52px;
+  border: none;
+  border-radius: 14px;
+  background: #2a1806;
+  color: #fff;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.search-dialog__status {
+  margin: 0.7rem 0.3rem 0.4rem;
+  font-size: 0.95rem;
+  opacity: 0.75;
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+
+.search-result {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+  padding: 8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.search-result:hover,
+.search-result:focus-visible {
+  background: rgba(242, 145, 31, 0.15);
+}
+
+.search-result img {
+  grid-row: 1 / 3;
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.search-result__name {
+  font-weight: 800;
+}
+
+.search-result__where {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* ---------- Drawers in English (slide from the left) ---------- */
+
+[dir="ltr"] .nav-drawer__panel,
+[dir="ltr"] .side-drawer__panel {
+  right: auto;
+  left: 0;
+  translate: -100% 0;
+  box-shadow: 12px 0 30px rgba(0, 0, 0, 0.3);
+}
+
+[dir="ltr"] .nav-drawer.is-open .nav-drawer__panel,
+[dir="ltr"] .side-drawer.is-open .side-drawer__panel {
+  translate: 0 0;
+}
+
+.nav-drawer__close {
+  right: auto;
+  inset-inline-end: 1.5rem;
+}
+
+.nav-drawer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.side-drawer__title {
+  color: var(--color-brand-dark);
+}
+
+.side-drawer__body {
+  font-size: 1.1rem;
+  white-space: pre-line;
+}
+
+/* ---------- Floating contact buttons (bottom-right) ---------- */
+
+.float-contact {
+  position: fixed;
+  right: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 130;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.float-btn {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+}
+
+.float-btn--wa {
+  background: #25d366;
+}
+
+.float-btn--call {
+  background: var(--color-brand-dark);
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* ---------- Accessibility button + panel (bottom-left) ---------- */
+
+.a11y-btn {
+  position: fixed;
+  left: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 130;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #1a5fb4;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.a11y-panel {
+  position: fixed;
+  left: 16px;
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 68px);
+  z-index: 135;
+  width: min(300px, calc(100vw - 32px));
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  padding: 1rem;
+  border-radius: 1.1rem;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.a11y-panel[hidden] {
+  display: none;
+}
+
+.a11y-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.a11y-panel__head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.a11y-panel__close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #eee;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.a11y-panel__size {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.2rem;
+  font-weight: 700;
+}
+
+.a11y-panel__size-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.a11y-panel__size-btns button {
+  min-width: 44px;
+  height: 44px;
+  border: 1px solid #1a5fb4;
+  border-radius: 10px;
+  background: #eef4fc;
+  color: #1a5fb4;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.a11y-panel__size-btns output {
+  min-width: 3.2em;
+  text-align: center;
+  font-weight: 700;
+}
+
+.a11y-toggle,
+.a11y-reset {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 46px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid #ccd;
+  border-radius: 12px;
+  background: #f6f7f9;
+  color: #111;
+  font: inherit;
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
+}
+
+.a11y-toggle[aria-pressed="true"] {
+  background: #1a5fb4;
+  border-color: #1a5fb4;
+  color: #fff;
+}
+
+.a11y-reset {
+  justify-content: center;
+  background: #fff;
+}
+
+.a11y-panel__statement {
+  text-align: center;
+  color: #1a5fb4;
+  font-weight: 700;
+  padding: 0.3rem;
+}
+
+/* ---------- Accessibility modes ---------- */
+
+html[data-text-size="1"] { font-size: 115%; }
+html[data-text-size="2"] { font-size: 130%; }
+html[data-text-size="3"] { font-size: 150%; }
+
+html.a11y-motion *,
+html.a11y-motion *::before,
+html.a11y-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+html.a11y-motion {
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+}
+
+html.a11y-motion .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+html.a11y-links a,
+html.a11y-links button {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+  outline: 2px dashed #ffd166;
+  outline-offset: 2px;
+}
+
+html.a11y-readable body,
+html.a11y-readable button,
+html.a11y-readable input {
+  font-family: Arial, "Segoe UI", sans-serif !important;
+  letter-spacing: 0.02em;
+  word-spacing: 0.08em;
+  line-height: 1.6;
+}
+
+html.a11y-contrast .text-glass-gold,
+html.a11y-contrast .text-glass-black,
+html.a11y-readable .text-glass-gold,
+html.a11y-readable .text-glass-black {
+  background-image: none;
+  -webkit-text-fill-color: currentColor;
+  text-shadow: none;
+}
+
+html.a11y-contrast .text-glass-black { color: #000; }
+html.a11y-contrast .hero__cta .text-glass-gold { color: #000; }
+html.a11y-contrast .hero__scroll .text-glass-gold { color: #fff; }
+
+html.a11y-contrast .site-nav,
+html.a11y-contrast .menu-modal__header {
+  background: #000;
+  backdrop-filter: none;
+}
+
+html.a11y-contrast .info,
+html.a11y-contrast .menu-modal__panel {
+  background: #000;
+  color: #fff;
+}
+
+html.a11y-contrast .info-card {
+  background: #000;
+  border: 2px solid #fff;
+  backdrop-filter: none;
+}
+
+html.a11y-contrast .info__title,
+html.a11y-contrast .info__subtitle,
+html.a11y-contrast .menu-section__title,
+html.a11y-contrast .info-card__title {
+  color: #ffd166;
+}
+
+html.a11y-contrast .dish {
+  background: #fff;
+  color: #000;
+  outline: 2px solid #fff;
+}
+
+html.a11y-contrast .dish__prices,
+html.a11y-contrast .dish__qty {
+  color: #000;
+}
+
+html.a11y-contrast .info a:not(.pill-btn) {
+  color: #ffd166;
+}
+
+html.a11y-contrast .card-fan__overlay {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 640px) {
+  .site-nav {
+    padding: 0 4%;
+  }
+
+  .flying-logo {
+    width: 42px;
+    right: calc(4% + 50px);
+  }
+
+  [dir="ltr"] .flying-logo {
+    right: 4%;
+  }
+
+  [dir="ltr"] .site-nav__actions {
+    margin-inline-end: 52px;
+  }
+
+  .nav-icon-btn,
+  .nav-lang-btn {
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .menu-modal__header {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-inline: 4%;
+  }
+
+  .menu-modal__logo {
+    width: 38px;
+  }
+
+  .menu-tabs {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .menu-tabs__tab {
+    flex: 1;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .menu-modal__close {
+    margin-inline-start: auto;
+  }
+
+  .menu-modal__body {
+    padding-inline: 4%;
+  }
+
+  .float-btn,
+  .a11y-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .search-dialog__panel {
+    margin-top: 12px;
+    max-height: calc(100vh - 24px);
+  }
+}
+
+/* Sections now live inside <main>, so "100%" no longer means the screen
+   height - size them against the viewport directly (svh = the visible
+   height on phones, excluding the browser's own bars). */
+.hero,
+.card-fan {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+@media (max-width: 640px) {
+  /* On phones the hero text sits over the photo (outside the orange
+     corner), so give it its own orange "card" to stay readable. */
+  .hero__content {
+    padding: 0.9rem 1rem 1.1rem;
+    border-radius: 1.25rem;
+    background: rgba(242, 145, 31, 0.92);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+  }
+
+  .hero__logo-anchor {
+    width: 96px;
+    height: 96px;
+    margin-top: -64px;
+  }
+
+  /* Spread the three cards further apart so none covers another's label. */
+  .card-fan__stack {
+    height: 700px;
+  }
+}
+
+/* body was hard-set to RTL; follow the page language instead. */
+[dir="ltr"] body {
+  direction: ltr;
+}
+
+[dir="ltr"] .hero__content {
+  text-align: left;
+}
+
+[dir="ltr"] .hero__logo-anchor {
+  margin: 0 auto 0.6rem 0;
+}
+
+@media (max-width: 640px) {
+  [dir="ltr"] .hero__content {
+    text-align: center;
+  }
+
+  [dir="ltr"] .hero__logo-anchor {
+    margin: -64px auto 0.6rem;
+  }
+}
+
+/* Drawers sit above the floating buttons while open. */
+.side-drawer,
+.nav-drawer {
+  z-index: 150;
+}
+
+/* Section chip of the part you're currently scrolling through (food window). */
+.menu-sections__chip.is-active {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(242, 145, 31, 0.35);
+}
+
+.info__footer p {
+  margin: 0;
+}
+
+.info__credit {
+  margin-top: 0.25rem !important;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 76px);
+  z-index: 200;
+  translate: -50% 20px;
+  max-width: calc(100vw - 32px);
+  padding: 0.8rem 1.2rem;
+  border-radius: 14px;
+  background: #1a0f03;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, translate 0.25s ease;
+}
+
+.toast.is-shown {
+  opacity: 1;
+  translate: -50% 0;
+}
